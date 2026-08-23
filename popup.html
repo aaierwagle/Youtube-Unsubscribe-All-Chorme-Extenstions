@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Unsubscribe All</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 320px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+    }
+
+    .header {
+      background: #ff0000;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header svg {
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .body {
+      padding: 20px;
+    }
+
+    .status-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .status-icon {
+      font-size: 28px;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    .status-text.success { color: #4caf50; }
+    .status-text.error   { color: #f44336; }
+    .status-text.running { color: #2196f3; }
+
+    .counter {
+      font-size: 32px;
+      font-weight: 700;
+      color: #ff0000;
+      display: none;
+    }
+
+    .counter.visible { display: block; }
+
+    .counter-label {
+      font-size: 11px;
+      color: #666;
+      margin-top: -4px;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      background: #333;
+      border-radius: 4px;
+      height: 4px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar-wrap.visible { display: block; }
+
+    .progress-bar {
+      height: 100%;
+      background: #ff0000;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-start {
+      background: #ff0000;
+      color: #fff;
+    }
+
+    .btn-start:hover:not(:disabled) {
+      background: #cc0000;
+    }
+
+    .btn-stop {
+      background: #333;
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      background: #444;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .warning {
+      background: #1a1200;
+      border: 1px solid #554400;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #ffcc00;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .warning strong { color: #ffdd44; }
+
+    .footer {
+      padding: 10px 20px;
+      border-top: 1px solid #1f1f1f;
+      font-size: 10px;
+      color: #555;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <!-- YouTube-style icon -->
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="6" fill="white" fill-opacity="0.15"/>
+      <path d="M26.4 10.8a2.88 2.88 0 0 0-2.03-2.04C22.54 8.3 16 8.3 16 8.3s-6.54 0-8.37.46A2.88 2.88 0 0 0 5.6 10.8C5.14 12.64 5.14 16 5.14 16s0 3.36.46 5.2a2.88 2.88 0 0 0 2.03 2.04c1.83.46 8.37.46 8.37.46s6.54 0 8.37-.46a2.88 2.88 0 0 0 2.03-2.04C26.86 19.36 26.86 16 26.86 16s0-3.36-.46-5.2z" fill="white"/>
+      <path d="M13.71 19.14L19.43 16l-5.72-3.14v6.28z" fill="#ff0000"/>
+    </svg>
+    <div class="header-text">
+      <h1>YouTube Unsubscribe All</h1>
+      <p>Clean up your subscriptions instantly</p>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="warning">
+      <strong>⚠ Warning:</strong> This will permanently unsubscribe you from <strong>all</strong> your YouTube channels. This cannot be undone.
+    </div>
+
+    <div class="status-box" id="statusBox">
+      <div class="status-icon" id="statusIcon">📋</div>
+      <div class="counter" id="counter">0</div>
+      <div class="counter-label" id="counterLabel" style="display:none">channels unsubscribed</div>
+      <div class="status-text" id="statusText">Open YouTube's subscription page, then click Start.</div>
+      <div class="progress-bar-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-start" id="btnStart">▶ Start Unsubscribing</button>
+    <button class="btn btn-stop" id="btnStop" style="display:none">⏹ Stop</button>
+  </div>
+
+  <div class="footer">Navigate to YouTube › Subscriptions first</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
